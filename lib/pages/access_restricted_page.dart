@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:logger/web.dart';
 import 'package:presence_app/conponent/press_animated_button.dart';
 
 class AccessRestrictedPage extends StatelessWidget {
-  const AccessRestrictedPage({super.key});
-
+  AccessRestrictedPage({super.key});
+  var logger = Logger(printer: PrettyPrinter());
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,10 +38,12 @@ class AccessRestrictedPage extends StatelessWidget {
                 const SizedBox(height: 20),
                 //Create custom elevated Button style
                 PressAnimatedButton(
+                  label: "Goto HomePage",
                   onPressed: () {
-                    debugPrint("👉OnPressed");
+                    logger.d("Preseed");
                   },
-                  child: Text("Goto HomePage"),
+                  icon: Icons.home,
+                  glow: false,
                 ),
                 const SizedBox(height: 20),
                 ElevatedButton(
