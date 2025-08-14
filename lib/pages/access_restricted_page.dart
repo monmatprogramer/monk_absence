@@ -40,34 +40,13 @@ class AccessRestrictedPage extends StatelessWidget {
                 PressAnimatedButton(
                   label: "Goto HomePage",
                   onPressed: () {
+                    Get.toNamed('/home');
                     logger.d("Preseed");
                   },
                   icon: Icons.home,
                   glow: false,
                 ),
                 const SizedBox(height: 20),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
-                    foregroundColor: Colors.white,
-                    elevation: 3,
-                    shadowColor: Colors.blueAccent.withValues(alpha: 0.5),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 14,
-                    ),
-                    textStyle: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 0.5,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                  ),
-                  onPressed: () => Get.toNamed('/home'),
-                  child: Text("🏠 Goto Home Page"),
-                ),
               ],
             ),
           ),

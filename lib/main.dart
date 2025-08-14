@@ -113,7 +113,7 @@ void main() {
         ),
       ),
 
-      initialRoute: '/access-restricted',
+      initialRoute: '/',
 
       getPages: [
         GetPage(
