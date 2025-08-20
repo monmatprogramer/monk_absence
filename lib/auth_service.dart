@@ -1,9 +1,10 @@
-
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:logger/logger.dart';
 import 'package:presence_app/db_config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -18,28 +19,105 @@ class AuthService extends GetxService {
   var userId = 0.obs;
   var isItImageDuplicate = false.obs;
   String role = '';
+  var logger = Logger(printer: PrettyPrinter());
   void updateUserId(int value) => userId.value = value;
   Future<void> login(String username, String password) async {
-    final res = await http.post(
-      Uri.parse("${DbConfig.apiUrl}/api/auth/login"),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'username': username, 'password': password}),
-    );
-    final data = jsonDecode(res.body);
+    isLoading.value = true;
+    //clear any previous user data to avoid duplication
+    userData.clear();
+    try {
+      //validation input fields
+      if (username.trim().isEmpty || password.trim().isEmpty) {
+        userData.addAll({
+          'success': false,
+          'message': 'Username and password cannot be empty',
+        });
+        return;
+      }
 
-    if (res.statusCode == 200) {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setString(_key, data[_key]);
-      await prefs.setString('tokenCreatedAt', DateTime.now().toIso8601String());
-      await getProfile();
-      role = data['role'];
-      updateUserId(data['id']);
-      userData.addAll({'success': true, 'role': role});
-    } else {
+      //login request
+      final res = await http
+          .post(
+            Uri.parse("${DbConfig.apiUrl}/api/auth/login"),
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({'username': username, 'password': password}),
+          )
+          .timeout(
+            const Duration(seconds: 5),
+            onTimeout: () {
+              throw TimeoutException(
+                'Connection timeout - please check your internet connection and try again.!!!',
+                const Duration(seconds: 5),
+              );
+            },
+          );
+
+      final data = jsonDecode(res.body);
+
+      if (res.statusCode == 200) {
+        // Valid credetial response
+        if (data[_key] == null || data['role'] == null || data['id'] == null) {
+          userData.addAll({
+            'success': false,
+            'message': 'Invalid server response - missing required fields',
+          });
+          return;
+        }
+
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString(_key, data[_key]);
+        await prefs.setString(
+          'tokenCreatedAt',
+          DateTime.now().toIso8601String(),
+        );
+        await getProfile();
+        role = data['role'];
+        updateUserId(data['id']);
+        userData.addAll({'success': true, 'role': role});
+      } else if (res.statusCode == 401) {
+        //Handle unauthorized access
+        userData.addAll({
+          'success': false,
+          'message': 'Invalid username or password',
+        });
+      } else if (res.statusCode >= 500) {
+        //Handle server errors
+        userData.addAll({
+          'success': false,
+          'message': 'Failed to connect to server',
+        });
+      } else {
+        userData.addAll({
+          'success': false,
+          'message': data['message'] ?? 'Failed to login',
+        });
+      }
+    } on TimeoutException catch (e) {
+      // Handle network errors
       userData.addAll({
         'success': false,
-        'message': data['message'] ?? 'Failed to login',
+        'message':
+            e.message ??
+            'Connection timeout - please check your internet connection and try again.!!!',
       });
+    } on http.ClientException catch (e) {
+      userData.addAll({
+        'success': false,
+        'message':
+            'Network error - please check your internet connection and try again.!!!',
+      });
+    } on FormatException catch (e) {
+      userData.addAll({
+        'success': false,
+        'message': 'Invalid server response format',
+      });
+    } catch (e) {
+      userData.addAll({
+        'success': false,
+        'message': 'An unexpected error occurred. Please try again later.',
+      });
+    } finally {
+      isLoading.value = false;
     }
   }
 
@@ -133,8 +211,7 @@ class AuthService extends GetxService {
 
   Future<bool> verifyUserImage() {
     // wholeData['profileImage']  /uploads/1754394116268-348854964.jpg
-    print(" 👉👉 ${wholeData['profileImage']}" );
+    print(" 👉👉 ${wholeData['profileImage']}");
     return Future.value(isItImageDuplicate.value = false);
-    
   }
 }

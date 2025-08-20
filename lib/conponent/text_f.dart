@@ -33,9 +33,12 @@ class TextF extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(left: 10, right: 10),
       child: TextFormField(
-
         controller: controller,
         obscureText: isSee,
+        style: TextStyle(
+          color: Colors.black87,
+          fontSize: isSamllScreen ? 12 : 16,
+        ),
         autovalidateMode: autovalidateMode,
         decoration: InputDecoration(
           hintText: hintText,
@@ -81,9 +84,9 @@ class TextF extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
+
         autofocus: focusNode == null ? false : true,
-        onTap: () {
-        },
+        onTap: () {},
         validator: validator,
         onChanged: onChanged,
       ),
