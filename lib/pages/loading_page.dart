@@ -22,7 +22,6 @@ class LoadingPage extends StatelessWidget {
         rxMap['id'] = authservice.wholeData['id'];
         rxMap['profileImage'] =
             '${DbConfig.apiUrl}${authservice.wholeData['profileImage']}';
-
         profileController.updateImageUrl(
           '${DbConfig.apiUrl}${authservice.wholeData['profileImage']}',
         );

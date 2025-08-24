@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:logger/web.dart';
 import 'package:presence_app/auth_service.dart';
 import 'package:presence_app/conponent/profile_avartar.dart';
 import 'package:presence_app/container_scanner.dart';
 import 'package:presence_app/controllers/home_page_scan_controller.dart';
 import 'package:presence_app/controllers/profile_controller.dart';
+import 'package:presence_app/controllers/scan_camera_controller.dart';
 import 'package:qr_code_tools/qr_code_tools.dart';
 
 class MenuPage extends StatefulWidget {
@@ -22,7 +24,9 @@ class MenuPage extends StatefulWidget {
 class _MenuPageState extends State<MenuPage> {
   final PageController _pageController = PageController();
   final HomePageScanController controller = Get.put(HomePageScanController());
+  final scanCameraController = Get.put(ScanCameraController());
   final autherService = Get.find<AuthService>();
+  var logger = Logger(printer: PrettyPrinter());
   int _currentPage = 0;
   static const List<String> _bannerImages = [
     'https://cdn.pixabay.com/photo/2025/06/14/21/46/plane-9660343_1280.jpg',
@@ -44,9 +48,13 @@ class _MenuPageState extends State<MenuPage> {
         isPressed: controller.isPressedCam.value,
         label: "Camera ",
         onTapFun: () {
-          controller.updateCam();
+          // controller.updateCam();
+          scanCameraController.updateIsScannedCompleted(false);
           //call camera
-          Get.toNamed('camera', arguments: [widget.userId, widget.userRole]);
+          Get.toNamed(
+            '/camera',
+            arguments: [autherService.userId.value, widget.userRole],
+          );
         },
       ),
       ContainerScanner(
@@ -276,6 +284,25 @@ class _MenuPageState extends State<MenuPage> {
           ],
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          int userId = autherService.userData['id'] ?? 0;
+          showMessageDialog(widget.userId);
+        },
+        child: Icon(Icons.person),
+      ),
     );
   }
+}
+
+void showMessageDialog(int userId) {
+  Get.dialog(
+    AlertDialog(
+      title: const Text("Find user"),
+      content: Text("Find user id in Hompmage is $userId"),
+      actions: [
+        TextButton(onPressed: () => Get.back(), child: const Text("Close")),
+      ],
+    ),
+  );
 }

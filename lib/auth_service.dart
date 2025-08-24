@@ -10,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService extends GetxService {
   final String _key = "token";
+  final String _userIdKey = "id";
   var userData = {}.obs;
   var wholeData = {}.obs;
   var isLoading = false.obs;
@@ -20,6 +21,18 @@ class AuthService extends GetxService {
   var isItImageDuplicate = false.obs;
   String role = '';
   var logger = Logger(printer: PrettyPrinter());
+
+  @override
+  void onInit() {
+    super.onInit();
+    _loadUserId();
+  }
+
+  Future<void> _loadUserId() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    userId.value = prefs.getInt(_userIdKey) ?? 0;
+  }
+
   void updateUserId(int value) => userId.value = value;
   Future<void> login(String username, String password) async {
     isLoading.value = true;
@@ -53,6 +66,9 @@ class AuthService extends GetxService {
           );
 
       final data = jsonDecode(res.body);
+      updateUserId(data['id']);
+
+      logger.d("data in authService: $data");
 
       if (res.statusCode == 200) {
         // Valid credetial response
@@ -66,14 +82,15 @@ class AuthService extends GetxService {
 
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString(_key, data[_key]);
+        await prefs.setInt(_userIdKey, data['id']);
         await prefs.setString(
           'tokenCreatedAt',
           DateTime.now().toIso8601String(),
         );
         await getProfile();
         role = data['role'];
-        updateUserId(data['id']);
-        userData.addAll({'success': true, 'role': role});
+
+        userData.addAll({'success': true, 'role': role, 'id': data['id']});
       } else if (res.statusCode == 401) {
         //Handle unauthorized access
         userData.addAll({
@@ -138,6 +155,8 @@ class AuthService extends GetxService {
   Future<void> logout() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.clear();
+    userId.value = 0;
+    isLoading.value = false;
   }
 
   Future<String> getToken() async {
@@ -158,6 +177,11 @@ class AuthService extends GetxService {
     } catch (e) {
       debugPrint("🔥 Error fetching profile: $e");
     }
+  }
+
+  //Get only user id
+  Future<void> getUserId() async {
+    final String token = await getToken();
   }
 
   // Update password
