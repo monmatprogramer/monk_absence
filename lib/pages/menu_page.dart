@@ -284,25 +284,8 @@ class _MenuPageState extends State<MenuPage> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          int userId = autherService.userData['id'] ?? 0;
-          showMessageDialog(widget.userId);
-        },
-        child: Icon(Icons.person),
-      ),
     );
   }
 }
 
-void showMessageDialog(int userId) {
-  Get.dialog(
-    AlertDialog(
-      title: const Text("Find user"),
-      content: Text("Find user id in Hompmage is $userId"),
-      actions: [
-        TextButton(onPressed: () => Get.back(), child: const Text("Close")),
-      ],
-    ),
-  );
-}
+

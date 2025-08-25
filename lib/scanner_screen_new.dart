@@ -15,7 +15,7 @@ class ScannerScreenNew extends StatefulWidget {
   final int userId;
   final String userRole;
   final scanCameraController = Get.find<ScanCameraController>();
-  
+
   ScannerScreenNew({super.key, required this.userId, required this.userRole});
 
   @override
@@ -24,7 +24,7 @@ class ScannerScreenNew extends StatefulWidget {
 
 class _ScannerScreenNewState extends State<ScannerScreenNew>
     with WidgetsBindingObserver {
-      final authService = Get.find<AuthService>();
+  final authService = Get.find<AuthService>();
   // Setup camera controller
   MobileScannerController? cameraController = MobileScannerController();
   bool isFlashOn = false;
@@ -141,16 +141,22 @@ class _ScannerScreenNewState extends State<ScannerScreenNew>
   Future<void> _sendToServer(int userId, String qrContent) async {
     _showMessage('🔃 Processing QR code...');
     try {
-      final baseUri = '${DbConfig.apiUrl}/api/qrcode/scan-qr';
+      final String baseUri = '${DbConfig.apiUrl}/api/qrcode/scan-qr';
+      final String tokenKey = await authService.getToken();
       final response = await _httpClient
           .post(
             Uri.parse(baseUri),
             headers: {
               'Content-Type': 'application/json',
+              'Authorization': 'Bearer $tokenKey',
               'Accept': 'application/json',
               'Connection': 'Keep-Alive',
             },
-            body: jsonEncode({'userId': userId, 'code': qrContent}),
+            body: jsonEncode({
+              'id': userId,
+              'sessionId': 19,
+              'qrCode': qrContent,
+            }),
           )
           .timeout(
             //duration
@@ -164,7 +170,7 @@ class _ScannerScreenNewState extends State<ScannerScreenNew>
             },
           );
 
-      await _handleServerResponse(response, userId);
+      await _handleServerResponse(response, authService.userId.value);
     } on TimeoutException catch (e) {
       await _handleNetworkError(
         'Connection timeout',
@@ -192,6 +198,16 @@ class _ScannerScreenNewState extends State<ScannerScreenNew>
     }
     await _cleanup();
     return true;
+  }
+
+  void _onPopInvoked(bool didPop, dynamic result) {
+    if (didPop) {
+      _cleanup();
+      return;
+    }
+    if (_isProcessing) {
+      _showMessage('⌛ Please wait for current scan to complete.');
+    }
   }
 
   // Handle server response
@@ -299,11 +315,10 @@ class _ScannerScreenNewState extends State<ScannerScreenNew>
     await _resetScanStateAndShowError('🔎 $message');
   }
 
-  //TODO: Fix here
   //Handle unauthorized
   Future<void> _handleUnauthorized() async {
     await _resetScanStateAndShowError('🔒 Session expired. Please login again');
-    Get.toNamed('/login');
+    // Get.toNamed('/login');
   }
 
   //Handle bad request
@@ -497,8 +512,9 @@ class _ScannerScreenNewState extends State<ScannerScreenNew>
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: _onWillPop,
+    return PopScope(
+      canPop: !_isProcessing,
+      onPopInvokedWithResult: _onPopInvoked,
       child: Scaffold(
         backgroundColor: Colors.black,
         body: Stack(
@@ -526,7 +542,26 @@ class _ScannerScreenNewState extends State<ScannerScreenNew>
             ),
           ],
         ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () async {
+            String token = await authService.getToken();
+            _showMessageDialog(authService.userId.value.toString());
+          },
+          child: const Icon(Icons.computer),
+        ),
       ),
     );
   }
+}
+
+void _showMessageDialog(String token) {
+  Get.dialog(
+    AlertDialog(
+      title: const Text("Find token key"),
+      content: Text("This scanner_screen_new token key: $token"),
+      actions: [
+        TextButton(onPressed: () => Get.back(), child: const Text("Close")),
+      ],
+    ),
+  );
 }
