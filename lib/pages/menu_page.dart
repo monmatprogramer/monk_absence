@@ -95,6 +95,12 @@ class _MenuPageState extends State<MenuPage> {
         isPressed: false,
         label: "List",
       ),
+      ContainerScanner(
+        image: "timer.png",
+        onTapFun: () => Get.toNamed('/session'),
+        isPressed: false,
+        label: "Sessions",
+      ),
     ];
   }
 
@@ -287,5 +293,3 @@ class _MenuPageState extends State<MenuPage> {
     );
   }
 }
-
-

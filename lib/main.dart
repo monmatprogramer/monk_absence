@@ -11,6 +11,7 @@ import 'package:presence_app/pages/loading_page.dart';
 import 'package:presence_app/pages/morning_list_page.dart';
 import 'package:presence_app/pages/prfile_page_get.dart';
 import 'package:presence_app/pages/profile_page_con.dart';
+import 'package:presence_app/pages/session_page.dart';
 import 'package:presence_app/pages/update_pass_page.dart';
 import 'package:presence_app/controllers/profile_binding.dart';
 import 'package:presence_app/qr_code_screen.dart';
@@ -114,7 +115,7 @@ void main() {
         ),
       ),
 
-      initialRoute: '/',
+      initialRoute: '/session',
 
       getPages: [
         GetPage(
@@ -172,6 +173,7 @@ void main() {
           page: () => PrfilePageGet(),
           binding: ProfileBinding(),
         ),
+        GetPage(name: '/session', page: () => SessionPage()),
         GetPage(name: '/access-restricted', page: () => AccessRestrictedPage()),
       ],
     ),
