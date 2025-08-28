@@ -6,6 +6,7 @@ class SessionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
@@ -41,8 +42,22 @@ class SessionHeader extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(width: 20),
-                Expanded(flex: 2, child: Placeholder()),
+                Expanded(
+                  flex: 2,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Wat Sampove meas",
+                        style: AppContaints.getScreenSize(context).isSmallScreen
+                            ? textTheme.headlineSmall?.copyWith(fontSize: 18)
+                            : textTheme.headlineSmall?.copyWith(fontSize: 24),
+                      ),
+                      SizedBox(height: 5),
+                      Text("Session manangement", style: textTheme.bodySmall),
+                    ],
+                  ),
+                ),
                 //title
               ],
             ),
