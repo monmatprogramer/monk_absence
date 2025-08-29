@@ -174,7 +174,6 @@ class _SessionListItemCusState extends State<_SessionListItemCus>
   }
 
   void _handleTap() {
-    logger.d("_heightFactor: $_heightFactor");
     setState(() {
       _isExpanded = !_isExpanded;
       if (_isExpanded) {
@@ -216,7 +215,34 @@ class _SessionListItemCusState extends State<_SessionListItemCus>
               child: Icon(Icons.add_circle, color: activateColor),
             ),
           ),
-          ClipRect(child: SizeTransition(sizeFactor: _heightFactor,child: Placeholder(),)),
+          ClipRect(
+            child: SizeTransition(
+              sizeFactor: _heightFactor,
+              child: Column(
+                children: [
+                  ListTile(
+                    contentPadding: const EdgeInsets.only(
+                      left: 32,
+                      right: 16,
+                      bottom: 8,
+                    ),
+                    title: Text(
+                      widget.session.sessionCode,
+                      style: txtTheme.bodyMedium?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                    ),
+                    subtitle: Text(
+                      'Starts: ${widget.session.startAt}\nEnds: ${widget.session.endAt}',
+                      style: txtTheme.bodySmall?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );
