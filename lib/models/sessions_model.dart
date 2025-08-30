@@ -21,13 +21,13 @@ class Session {
   //Conver json to map
   factory Session.fromJson(Map<String, dynamic> json) {
     return Session(
-      id: json['id'],
-      title: json['title'],
-      sessionCode: json['sessionCode'],
-      startAt: json['startAt'],
-      endAt: json['endAt'],
-      createdAt: json['createdAt'],
-      isActive: json['isActive'],
+      id: json['id'] ?? 0,
+      title: json['title'] ?? '',
+      sessionCode: json['sessionCode'] ?? '',
+      startAt: json['startAt'] ?? '',
+      endAt: json['endAt'] ?? '',
+      createdAt: json['createdAt'] ?? '',
+      isActive: json['isActive'] ?? 0,
     );
   }
 
@@ -41,5 +41,26 @@ class Session {
       'createdAt': createdAt,
       'isActive': isActive,
     };
+  }
+
+  // Create a copy of Session with some fields changed (usefull for updates)
+  Session copyWith({
+    int? id,
+    String? title,
+    String? sessionCode,
+    String? startAt,
+    String? endAt,
+    String? createdAt,
+    bool? isActive,
+  }){
+    return Session(
+      id: id?? this.id,
+      title: title?? this.title,
+      sessionCode: sessionCode?? this.sessionCode,
+      startAt: startAt?? this.startAt,
+      endAt: endAt?? this.endAt,
+      createdAt: createdAt?? this.createdAt,
+      isActive: isActive?? this.isActive,
+    );
   }
 }

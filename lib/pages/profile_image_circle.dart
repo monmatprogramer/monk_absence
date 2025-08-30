@@ -8,7 +8,7 @@ import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
 import 'package:mime/mime.dart';
-import 'package:presence_app/auth_service.dart';
+import 'package:presence_app/services/auth_service.dart';
 import 'package:presence_app/conponent/profile_avartar.dart';
 import 'package:presence_app/conponent/show_app_message.dart';
 import 'package:presence_app/constains/response_message.dart';

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
-import 'package:presence_app/auth_service.dart';
+import 'package:presence_app/services/auth_service.dart';
 import 'package:presence_app/conponent/app_containts.dart';
 import 'package:presence_app/conponent/show_status_dialog.dart';
 import 'package:presence_app/controllers/profile_controller.dart';

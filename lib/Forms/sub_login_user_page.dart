@@ -5,7 +5,7 @@ import 'package:presence_app/conponent/btn.dart';
 import 'package:presence_app/conponent/show_app_message.dart';
 import 'package:presence_app/conponent/show_status_dialog.dart';
 import 'package:presence_app/conponent/text_f.dart';
-import 'package:presence_app/auth_service.dart';
+import 'package:presence_app/services/auth_service.dart';
 
 class SubLoginUserPage extends StatefulWidget {
   const SubLoginUserPage({super.key});

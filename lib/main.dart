@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:presence_app/Forms/login_user_page.dart';
-import 'package:presence_app/auth_service.dart';
+import 'package:presence_app/services/auth_service.dart';
 import 'package:presence_app/controllers/app_binding.dart';
 import 'package:presence_app/controllers/scan_camera_binding.dart';
 import 'package:presence_app/controllers/scan_camera_controller.dart';

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:presence_app/auth_service_get.dart';
+import 'package:presence_app/services/auth_service_get.dart';
 
 class DetailPage extends StatelessWidget {
   const DetailPage({super.key});

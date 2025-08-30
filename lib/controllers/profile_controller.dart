@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:get/get.dart';
-import 'package:presence_app/auth_service.dart';
+import 'package:presence_app/services/auth_service.dart';
 import 'package:presence_app/db_config.dart';
 
 class ProfileController extends GetxController {

@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 import 'package:http/http.dart' as _httpClient;
 import 'package:mobile_scanner/mobile_scanner.dart';
-import 'package:presence_app/auth_service.dart';
+import 'package:presence_app/services/auth_service.dart';
 import 'package:presence_app/controllers/scan_camera_controller.dart';
 import 'package:presence_app/db_config.dart';
 

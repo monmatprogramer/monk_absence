@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:presence_app/auth_service.dart';
+import 'package:presence_app/services/auth_service.dart';
 import 'package:presence_app/conponent/app_containts.dart';
 import 'package:presence_app/conponent/update_page_body_form.dart';
 import 'package:presence_app/controllers/update_pwd_controller.dart';

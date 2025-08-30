@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:presence_app/auth_service.dart';
+import 'package:presence_app/services/auth_service.dart';
 import 'package:presence_app/conponent/profile_avartar.dart';
 import 'package:presence_app/container_scanner.dart';
 import 'package:presence_app/controllers/home_page_scan_controller.dart';
