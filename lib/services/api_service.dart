@@ -18,7 +18,7 @@ class ApiService {
       final String token = await authService.getToken();
       // Make HTTP GET requrest to the API
       final response = await _client.get(
-        Uri.parse('$baseUrl/sessions/all'),
+        Uri.parse('$baseUrl/session/all'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
@@ -27,14 +27,11 @@ class ApiService {
       );
       // Check if the request was successful
       if (response.statusCode == 200) {
-        final Map<String, dynamic> jsonData = json.decode(
+        final List<dynamic> jsonData = json.decode(
           response.body,
         ); //response.body = [{"id": 1, "name": "Session 1"}, {"id": 2, "name": "Session 2"}];
-        final List<dynamic> sessionsJson =
-            jsonData['sessions'] ??
-            jsonData['data'] ??
-            []; // sessionsJson = [{"id": 1, "name": "Session 1"}, {"id": 2, "name": "Session 2"}];;
-        return sessionsJson.cast<Map<String, dynamic>>();
+        _logger.d('jsonData.cast: ${jsonData.cast<Map<String, dynamic>>()}');
+        return jsonData.cast<Map<String, dynamic>>();
       } else {
         _logger.e('Failed to get sessions from API: ${response.statusCode}');
         throw Exception(
