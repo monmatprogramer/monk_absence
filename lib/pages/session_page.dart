@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:presence_app/conponent/session_body.dart';
 import 'package:presence_app/conponent/session_header.dart';
+import 'package:presence_app/services/api_service.dart';
 
 class SessionPage extends StatelessWidget {
-  const SessionPage({super.key});
-
+  SessionPage({super.key});
+  final ApiService apiService = ApiService();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,6 +32,17 @@ class SessionPage extends StatelessWidget {
             ),
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          try {
+            final sessions = await apiService.getAllSessions();
+            Get.snackbar('success', 'Got ${sessions.length} sessions');
+          } catch (e) {
+            Get.snackbar('Error', "Failed to get sessions: $e");
+          }
+        },
+        child: Icon(Icons.settings),
       ),
     );
   }
