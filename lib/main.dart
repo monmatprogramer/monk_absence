@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:presence_app/Forms/login_user_page.dart';
+import 'package:presence_app/controllers/session_binding.dart';
 import 'package:presence_app/services/auth_service.dart';
 import 'package:presence_app/controllers/app_binding.dart';
 import 'package:presence_app/controllers/scan_camera_binding.dart';
@@ -173,7 +174,11 @@ void main() {
           page: () => PrfilePageGet(),
           binding: ProfileBinding(),
         ),
-        GetPage(name: '/session', page: () => SessionPage()),
+        GetPage(
+          name: '/session',
+          page: () => SessionPage(),
+          binding: SessionBinding(),
+        ),
         GetPage(name: '/access-restricted', page: () => AccessRestrictedPage()),
       ],
     ),

@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
-import 'package:presence_app/conponent/app_containts.dart';
 import 'package:presence_app/db_config.dart';
 import 'package:presence_app/services/auth_service.dart';
 
@@ -17,6 +16,7 @@ class ApiService {
     try {
       final String token = await authService.getToken();
       // Make HTTP GET requrest to the API
+
       final response = await _client.get(
         Uri.parse('$baseUrl/session/all'),
         headers: {
@@ -30,7 +30,6 @@ class ApiService {
         final List<dynamic> jsonData = json.decode(
           response.body,
         ); //response.body = [{"id": 1, "name": "Session 1"}, {"id": 2, "name": "Session 2"}];
-        _logger.d('jsonData.cast: ${jsonData.cast<Map<String, dynamic>>()}');
         return jsonData.cast<Map<String, dynamic>>();
       } else {
         _logger.e('Failed to get sessions from API: ${response.statusCode}');
@@ -42,5 +41,10 @@ class ApiService {
       _logger.e('Error getting sessions from API: $e');
       throw Exception('Error getting sessions from API: $e');
     }
+  }
+
+  // Clean up resources when done
+  void dispose() {
+    _client.close();
   }
 }
