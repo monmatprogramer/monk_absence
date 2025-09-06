@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:logger/logger.dart';
+import 'package:presence_app/controllers/session_controller.dart';
 import 'package:presence_app/models/sessions_model.dart';
 
 var logger = Logger(printer: PrettyPrinter());
@@ -131,15 +133,83 @@ class SessionBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final txtTheme = Theme.of(context).textTheme;
+    //Get the controller instance
+    final SessionController controller = Get.find<SessionController>();
     //list view builder
-    return ListView.builder(
-      itemCount: sessions.length,
-      itemBuilder: (context, index) {
-        final session = sessions[index];
-        final isActive = session.isActive == true;
-        return _SessionListItemCus(session: session);
-      },
-    );
+    return Obx(() {
+      // Shows loading when request data from API
+      if (controller.isLoading.value) {
+        return const Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(height: 16),
+              Text('Loading sessions...'),
+            ],
+          ),
+        );
+      }
+      // Show error message
+      if (controller.hasError.value) {
+        return Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.error_outline, size: 64, color: Colors.red),
+              SizedBox(height: 16),
+              Text(
+                'Oops! Something went wrong',
+                style: Theme.of(context).textTheme.headlineSmall,
+              ),
+              SizedBox(height: 8),
+              Text(
+                controller.errorMessage.value,
+                style: Theme.of(context).textTheme.bodyMedium,
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 18),
+              ElevatedButton.icon(
+                onPressed: controller.refreshSessions,
+                icon: Icon(Icons.refresh),
+                label: Text("Try again"),
+              ),
+            ],
+          ),
+        );
+      }
+      if (controller.sessions.isEmpty) {
+        return Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.event_note, size: 64, color: Colors.grey),
+              SizedBox(height: 16),
+              Text(
+                "No session found",
+                style: Theme.of(context).textTheme.headlineSmall,
+              ),
+              SizedBox(height: 8),
+              Text(
+                'Pull down to refresh',
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            ],
+          ),
+        );
+      }
+      return RefreshIndicator(
+        onRefresh: controller.refreshSessions,
+        child: ListView.builder(
+          padding: const EdgeInsets.all(16),
+          itemCount: controller.sessions.length,
+          itemBuilder: (context, index) {
+            final session = controller.sessions[index];
+            return _SessionListItem(session: session);
+          },
+        ),
+      );
+    });
   }
 }
 
@@ -286,52 +356,252 @@ class _SessionListItemState extends State<_SessionListItem>
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final txtTheme = Theme.of(context).textTheme;
     final colorScheme = Theme.of(context).colorScheme;
     final activateColor = widget.session.isActive ? Colors.green : Colors.red;
-    return ExpansionTile(
-      shape: const Border(), //remove border around the expansion tile
-      collapsedShape: const Border(), //remove border around the expansion tile
-      backgroundColor: colorScheme.primary.withOpacity(0.05),
-      collapsedBackgroundColor: Colors.transparent,
-      leading: Icon(Icons.circle, color: activateColor),
-      title: Text(
-        widget.session.title,
-        style: txtTheme.bodyMedium?.copyWith(
-          color: Theme.of(context).colorScheme.onSurface,
+    return Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Column(
+        children: [
+          ListTile(
+            contentPadding: const EdgeInsets.all(16),
+            leading: Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: widget.session.isActive
+                    ? Colors.green.withValues(alpha: 0.1)
+                    : Colors.grey.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(
+                widget.session.isActive
+                    ? Icons.play_circle_filled
+                    : Icons.pause_circle_filled,
+                color: widget.session.isActive ? Colors.green : Colors.grey,
+                size: 28,
+              ),
+            ),
+            title: Text(
+              widget.session.title,
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 4),
+                Text(
+                  'Code ${widget.session.sessionCode}',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.primary,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                SizedBox(height: 2),
+                Text(_formatTimeRange(), style: theme.textTheme.bodySmall),
+              ],
+            ),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: widget.session.isActive
+                        ? Colors.green.withValues(alpha: 0.1)
+                        : Colors.grey.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    widget.session.isActive ? 'Active' : 'Inactive',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: widget.session.isActive
+                          ? Colors.green
+                          : Colors.grey,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                IconButton(
+                  onPressed: () {
+                    setState(() {
+                      _isExpanded = !_isExpanded;
+                    });
+                  },
+                  icon: Icon(
+                    _isExpanded
+                        ? Icons.keyboard_arrow_up
+                        : Icons.keyboard_arrow_down,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          if (_isExpanded)
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.surface,
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(12),
+                  bottomRight: Radius.circular(12),
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Divider(),
+                  const SizedBox(height: 8),
+                  _buildDetailRow(
+                    'Session ID',
+                    widget.session.id.toString(),
+                    Icons.tag,
+                  ),
+                  const SizedBox(height: 8),
+                  _buildDetailRow(
+                    'Start Time',
+                    _formatDateTime(widget.session.startAt),
+                    Icons.play_arrow,
+                  ),
+                  const SizedBox(height: 8),
+                  _buildDetailRow(
+                    'End Time',
+                    _formatDateTime(widget.session.endAt),
+                    Icons.stop,
+                  ),
+                  _buildDetailRow(
+                    'Created',
+                    _formatDateTime(widget.session.createdAt),
+                    Icons.calendar_today,
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton.icon(
+                          onPressed: () {
+                            _showSessionDetails();
+                          },
+                          icon: const Icon(Icons.visibility),
+                          label: const Text(
+                            'View Details',
+                            style: TextStyle(fontSize: 8),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          onPressed: widget.session.isActive
+                              ? () {
+                                  _joinSession();
+                                }
+                              : null,
+                          icon: const Icon(Icons.login),
+                          label: const Text(
+                            'Join Session',
+                            style: TextStyle(fontSize: 8),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDetailRow(String label, String value, IconData icon) {
+    return Row(
+      children: [
+        Icon(
+          icon,
+          size: 16,
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
         ),
-      ),
-      trailing: RotationTransition(
-        turns: _animation,
-        child: Icon(Icons.add_circle, color: activateColor),
-      ),
-      onExpansionChanged: (bool expanded) {
-        setState(() {
-          _isExpanded = expanded;
-        });
-        if (expanded) {
-          _controller.forward();
-        } else {
-          _controller.reverse();
-        }
-      },
-      children: <Widget>[
-        ListTile(
-          contentPadding: const EdgeInsets.only(left: 32, right: 16, bottom: 8),
-          title: Text(
-            widget.session.sessionCode,
-            style: txtTheme.bodyMedium?.copyWith(
-              color: Theme.of(context).colorScheme.onSurface,
-            ),
-          ),
-          subtitle: Text(
-            'Starts: ${widget.session.startAt}\nEnds: ${widget.session.endAt}',
-            style: txtTheme.bodySmall?.copyWith(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-            ),
-          ),
+        SizedBox(width: 8),
+        Text(
+          '$label: ',
+          style: Theme.of(
+            context,
+          ).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w500),
+        ),
+        Expanded(
+          child: Text(value, style: Theme.of(context).textTheme.bodySmall),
         ),
       ],
     );
+  }
+
+  void _showSessionDetails() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(widget.session.title),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Session Code: ${widget.session.sessionCode}'),
+            const SizedBox(height: 8),
+            Text('Status: ${widget.session.isActive ? 'Active' : 'Inactive'}'),
+            const SizedBox(height: 8),
+            Text('Start: ${_formatDateTime(widget.session.startAt)}'),
+            const SizedBox(height: 8),
+            Text('End: ${_formatDateTime(widget.session.endAt)}'),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Get.back(), child: const Text('Close')),
+        ],
+      ),
+    );
+  }
+
+  void _joinSession() {
+    Get.snackbar(
+      'Session',
+      'Joining session ${widget.session.sessionCode}',
+      snackPosition: SnackPosition.BOTTOM,
+    );
+  }
+
+  String _formatDateTime(String dateTimeString) {
+    try {
+      final dateTime = DateTime.parse(dateTimeString);
+      return '${dateTime.day}/${dateTime.month}/${dateTime.year} ${_formatTime(dateTimeString)}';
+    } catch (e) {
+      return dateTimeString;
+    }
+  }
+
+  String _formatTimeRange() {
+    final startTime = _formatTime(widget.session.startAt);
+    final endTime = _formatTime(widget.session.endAt);
+    return '$startTime - $endTime';
+  }
+
+  String _formatTime(String dateTimeString) {
+    try {
+      final dateTime = DateTime.parse(dateTimeString);
+      final hour = dateTime.hour.toString().padLeft(2, '0');
+      final minute = dateTime.minute.toString().padLeft(2, '0');
+      return '$hour:$minute';
+    } catch (e) {
+      return dateTimeString;
+    }
   }
 }

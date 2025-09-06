@@ -120,7 +120,7 @@ void main() {
 
       getPages: [
         GetPage(
-          name: '/',
+          name: '/loading',
           page: () => LoadingPage(),
           binding: ProfileBinding(),
         ),
