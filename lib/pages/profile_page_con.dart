@@ -1,51 +1,53 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
+import 'package:presence_app/pages/loading_states.dart';
 import 'package:presence_app/services/auth_service.dart';
-import 'package:presence_app/conponent/app_containts.dart';
 import 'package:presence_app/conponent/show_status_dialog.dart';
 import 'package:presence_app/controllers/profile_controller.dart';
 import 'package:presence_app/pages/profile_page_body_con.dart';
 import 'package:presence_app/pages/profile_page_header_con.dart';
+
+enum Status { loading }
 
 class ProfilePageCon extends StatelessWidget {
   ProfilePageCon({super.key});
 
   var logger = Logger(printer: PrettyPrinter());
   final profileController = Get.find<ProfileController>();
+
   @override
   Widget build(BuildContext context) {
-    logger.d("ProfilePageCon👉 ${profileController.imageUrl.value}");
     return Scaffold(
-      backgroundColor: Colors.grey[300],
       appBar: AppBar(centerTitle: true, title: const Text("Profile")),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            SizedBox(
-              width: AppContaints.maxTextWidth - 90,
-              height: AppContaints.maxTextWidth - 130, //200
-              child: ProfilePageHeaderCon(
-               
+      body: Obx(() {
+        switch (profileController.profileResponse.value.states) {
+          case LoadingStates.loading:
+            return const Center(child: CircularProgressIndicator());
+          case LoadingStates.initial:
+            return Center(child: CircularProgressIndicator());
+          case LoadingStates.success:
+            return const SingleChildScrollView(
+              child: Column(
+                children: [ProfilePageHeaderCon(), ProfilePageBodyCon()],
               ),
-            ),
-            //const SizedBox(height: 80, child: Placeholder()),
-            ProfilePageBodyCon(),
-            SizedBox(
-              width: 150,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                  foregroundColor: Colors.white,
-                  textStyle: TextStyle(fontSize: 18),
+            );
+          case LoadingStates.error:
+            final errorMessage =
+                profileController.profileResponse.value.errorMessage ??
+                "An unknown error occurred";
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(
+                  errorMessage,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(color: Colors.red, fontSize: 16),
                 ),
-                onPressed: () => _handleLogout(context),
-                child: const Text("Logout"),
               ),
-            ),
-          ],
-        ),
-      ),
+            );
+        }
+      }),
     );
   }
 

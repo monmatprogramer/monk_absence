@@ -164,18 +164,33 @@ class AuthService extends GetxService {
     return prefs.getString(_key) ?? '';
   }
 
-  Future<void> getProfile() async {
+  // Fetch profile data only
+  Future<Map<String, dynamic>> getProfile() async {
     final String token = await getToken();
+    //if token is empty
+    if (token.isEmpty) {
+      //Todo: use customer exception or AppException
+      throw Exception('Authentication token not found');
+    }
+
     final uri = '${DbConfig.apiUrl}/api/user/profile';
     final Map<String, String> headers = {'Authorization': 'Bearer $token'};
     try {
-      final res = await http.get(Uri.parse(uri), headers: headers);
+      final res = await http
+          .get(Uri.parse(uri), headers: headers)
+          .timeout(const Duration(seconds: 10));
       if (res.statusCode == 200) {
-        wholeData.value = jsonDecode(res.body);
-        return;
+        final data = jsonDecode(res.body);
+        wholeData.value = data;
+        return data;
+      } else {
+        throw Exception(
+          'Failed to load profile. Status code: ${res.statusCode}',
+        );
       }
     } catch (e) {
       debugPrint("🔥 Error fetching profile: $e");
+      throw Exception('Failed to load profile: $e');
     }
   }
 

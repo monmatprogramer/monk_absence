@@ -252,8 +252,8 @@ class _MenuPageState extends State<MenuPage> {
                                 localImageFile:
                                     widget.profileController.image.value,
                                 networkImagUrl:
-                                    widget.profileController.imageUrl.value,
-                                dfaultAssetPath:
+                                    // widget.profileController.imageUrl.value,
+                                // dfaultAssetPath:
                                     widget.profileController.imagePath.value,
                               ),
                             ),

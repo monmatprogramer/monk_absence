@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:presence_app/Forms/login_user_page.dart';
 import 'package:presence_app/controllers/session_binding.dart';
+import 'package:presence_app/pages/exception_test_page.dart';
 import 'package:presence_app/services/auth_service.dart';
 import 'package:presence_app/controllers/app_binding.dart';
 import 'package:presence_app/controllers/scan_camera_binding.dart';
-import 'package:presence_app/controllers/scan_camera_controller.dart';
 import 'package:presence_app/pages/access_restricted_page.dart';
 import 'package:presence_app/pages/home_menu_page.dart';
 import 'package:presence_app/pages/loading_page.dart';
@@ -116,7 +116,7 @@ void main() {
         ),
       ),
 
-      initialRoute: '/session',
+      initialRoute: '/exception-test-page',
 
       getPages: [
         GetPage(
@@ -179,6 +179,7 @@ void main() {
           page: () => SessionPage(),
           binding: SessionBinding(),
         ),
+        GetPage(name: '/exception-test-page', page: () => ExceptionTestPage()),
         GetPage(name: '/access-restricted', page: () => AccessRestrictedPage()),
       ],
     ),

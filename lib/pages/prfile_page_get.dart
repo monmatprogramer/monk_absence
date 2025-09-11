@@ -21,7 +21,8 @@ class PrfilePageGet extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           ElevatedButton(
-            onPressed: () => controller.updateName("Mon Mat"),
+            // onPressed: () => controller.updateName("Mon Mat"),
+            onPressed: () {},
             child: const Text("change name"),
           ),
         ],

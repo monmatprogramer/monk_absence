@@ -31,7 +31,7 @@ class ProfileImageCircle extends StatelessWidget {
     );
     if (pickerFile != null) {
       // profileController.updateImage(PickedFile.path);
-      profileController.handleSelectedImage(File(pickerFile.path));
+      // profileController.handleSelectedImage(File(pickerFile.path));
 
       await uploadImage(File(pickerFile.path));
     }
@@ -108,7 +108,7 @@ class ProfileImageCircle extends StatelessWidget {
               : ProfileAvartar(
                   size: 140,
                   localImageFile: profileController.image.value,
-                  networkImagUrl: profileController.imageUrl.value,
+                  // networkImagUrl: profileController.imageUrl.value,
                   dfaultAssetPath: 'images/profile.png',
                 ),
 

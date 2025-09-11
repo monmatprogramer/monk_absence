@@ -1,17 +1,32 @@
 import 'dart:io';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:get/get.dart';
+import 'package:presence_app/pages/loading_states.dart';
 import 'package:presence_app/services/auth_service.dart';
 import 'package:presence_app/db_config.dart';
 
 class ProfileController extends GetxController {
+  final authService = Get.find<AuthService>();
+
+  final profileResponse = Rx<ApiResponse<Map<String, dynamic>>>(
+    ApiResponse.initial(),
+  );
+
   var isLoading = true.obs; //this observable variable
   var imagePath = 'images/profile.png'.obs;
-  var name = "Guest".obs;
+
   var isProfileImageChanged = false.obs;
-  final RxnString imageUrl = RxnString();
   final Rxn<File> image = Rxn<File>();
-  final authService = Get.find<AuthService>();
+
+  String get name => profileResponse.value.data?['name'] ?? 'Guest';
+  // final RxnString imageUrl = RxnString();
+  String? get imageUrl {
+    final profileImage = profileResponse.value.data?['profileImage'];
+    if (profileImage != null) {
+      return '${DbConfig.apiUrl}$profileImage';
+    }
+    return null;
+  }
 
   @override
   void onInit() {
@@ -20,26 +35,36 @@ class ProfileController extends GetxController {
   }
 
   Future<void> _loadingProfile() async {
-    await authService.getProfile();
-    isLoading.value = false;
-    if (authService.wholeData['profileImage'] != null) {
-      imageUrl.value =
-          '${DbConfig.apiUrl}${authService.wholeData['profileImage']}';
+    profileResponse.value = ApiResponse.loading();
+    try {
+      final data = await authService.getProfile();
+      profileResponse.value = ApiResponse.success(data);
+    } catch (e) {
+      profileResponse.value = ApiResponse.error(e.toString());
     }
   }
 
-  void updateIsLoading(bool value) => isLoading.value = value;
-  void updateImagePath(String value) => imagePath.value = value;
-  Future<void> updateImageUrl(String newUrl) async {
-    final oldUrl = imageUrl.value;
+  Future<void> updateImageUrl(String newImagePath) async {
+    final oldUrl = imageUrl;
     if (oldUrl != null) {
       await DefaultCacheManager().removeFile(oldUrl);
     }
-    imageUrl.value = newUrl;
+
+    if (profileResponse.value.isSucess) {
+      final currentData = profileResponse.value.data!;
+      final updatedData = Map<String, dynamic>.from(currentData);
+      updatedData['profileImage'] = newImagePath;
+      profileResponse.value = ApiResponse.success(updatedData);
+    }
     isProfileImageChanged.value = true;
   }
 
-  void updateName(String newName) => name.value = newName;
-  void updateImage(String imageUrl) => updateImageUrl(imageUrl);
-  void handleSelectedImage(File value) => image.value = value;
+  void updatedName(String newName) {
+    if (profileResponse.value.isSucess) {
+      final currentData = profileResponse.value.data;
+      final updatedData = Map<String, dynamic>.from(currentData!);
+    }
+  }
+
+  void handleSeletedImage(File value) => image.value = value;
 }
