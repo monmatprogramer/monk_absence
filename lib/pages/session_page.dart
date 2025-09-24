@@ -6,7 +6,6 @@ import 'package:presence_app/controllers/session_controller.dart';
 
 class SessionPage extends StatelessWidget {
   SessionPage({super.key});
-  final SessionController sessionController = Get.find<SessionController>();
   @override
   Widget build(BuildContext context) {
     final SessionController controller = Get.find<SessionController>();
@@ -34,7 +33,9 @@ class SessionPage extends StatelessWidget {
                 child: Text('Inactive only'),
               ),
             ],
+
             child: const Icon(Icons.filter_list),
+
           ),
           IconButton(
             onPressed: controller.refreshSessions,

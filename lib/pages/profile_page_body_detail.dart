@@ -14,7 +14,9 @@ class _ProfilePageBodyDetailState extends State<ProfilePageBodyDetail> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(color: Colors.transparent),
+      decoration: BoxDecoration(
+        color: Colors.transparent,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

@@ -13,7 +13,7 @@ class ProfilePageBodyCon extends StatelessWidget {
         color: Colors.transparent,
         borderRadius: BorderRadius.circular(20),
       ),
-      child: ProfilePageBodyDetail(),
+      child: const ProfilePageBodyDetail(),
     );
   }
 }

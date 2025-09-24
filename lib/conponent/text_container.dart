@@ -16,7 +16,7 @@ class TextContainer extends StatelessWidget {
     return Container(
       height: 60,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.secondary,
         borderRadius: BorderRadius.circular(10),
       ),
       child: Row(
@@ -31,7 +31,12 @@ class TextContainer extends StatelessWidget {
                   icon: Icon(icon, color: Colors.blue),
                 ),
                 const SizedBox(width: 5),
-                Text(title),
+                Text(
+                  title,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSecondary,
+                  ),
+                ),
               ],
             ),
           ),

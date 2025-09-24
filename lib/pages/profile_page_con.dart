@@ -8,18 +8,26 @@ import 'package:presence_app/controllers/profile_controller.dart';
 import 'package:presence_app/pages/profile_page_body_con.dart';
 import 'package:presence_app/pages/profile_page_header_con.dart';
 
-enum Status { loading }
+
 
 class ProfilePageCon extends StatelessWidget {
   ProfilePageCon({super.key});
 
-  var logger = Logger(printer: PrettyPrinter());
+  final logger = Logger(printer: PrettyPrinter());
+
   final profileController = Get.find<ProfileController>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(centerTitle: true, title: const Text("Profile")),
+      appBar: AppBar(
+        automaticallyImplyLeading: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Get.offNamed('/home'),
+        ) ,
+        centerTitle: true, title: const Text("Profile"),
+      ),
       body: Obx(() {
         switch (profileController.profileResponse.value.states) {
           case LoadingStates.loading:
@@ -29,7 +37,11 @@ class ProfilePageCon extends StatelessWidget {
           case LoadingStates.success:
             return const SingleChildScrollView(
               child: Column(
-                children: [ProfilePageHeaderCon(), ProfilePageBodyCon()],
+                children: [
+                  ProfilePageHeaderCon(),
+                  SizedBox(height: 20),
+                ProfilePageBodyCon(),
+                ],
               ),
             );
           case LoadingStates.error:
@@ -47,6 +59,7 @@ class ProfilePageCon extends StatelessWidget {
               ),
             );
         }
+
       }),
     );
   }

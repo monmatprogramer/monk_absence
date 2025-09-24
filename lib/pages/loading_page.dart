@@ -5,44 +5,72 @@ import 'package:presence_app/services/auth_service.dart';
 import 'package:presence_app/controllers/profile_controller.dart';
 import 'package:presence_app/db_config.dart';
 
-class LoadingPage extends StatelessWidget {
-  LoadingPage({super.key});
-  var logger = Logger(printer: PrettyPrinter());
+class LoadingPage extends StatefulWidget {
+  const LoadingPage({super.key});
+
+  @override
+  State<LoadingPage> createState() => _LoadingPageState();
+}
+
+class _LoadingPageState extends State<LoadingPage> {
+  final logger = Logger(printer: PrettyPrinter());
   final authservice = Get.find<AuthService>();
   final profileController = Get.find<ProfileController>();
 
+  @override
+  void initState() {
+    super.initState();
+    checkLoginStatus();
+  }
+
   Future<void> checkLoginStatus() async {
     try {
-      await authservice.handleIsLoggedIn();
+      await Future.delayed(const Duration(seconds: 1));
+      await authservice.handleIsLoggedIn().timeout(
+        const Duration(seconds: 15),
+        onTimeout: () {
+          throw 'Connection timeout. Please try again later';
+        },
+      );
+
       if (authservice.isLoggedIn.value == true) {
-        RxMap<dynamic, dynamic> rxMap = RxMap();
         await authservice.getProfile();
 
-        rxMap['role'] = authservice.wholeData['role'];
-        rxMap['id'] = authservice.wholeData['id'];
-        rxMap['profileImage'] =
-            '${DbConfig.apiUrl}${authservice.wholeData['profileImage']}';
-        profileController.updateImageUrl(
-          '${DbConfig.apiUrl}${authservice.wholeData['profileImage']}',
-        );
+        final userData = authservice.wholeData;
+        if(userData == null || userData.isEmpty){
+          throw 'Failed to load user profile';
+        }
 
-        Get.toNamed(
+        final profileImage = '${DbConfig.apiUrl}${userData['profileImage']}';
+        profileController.updateImageUrl(profileImage);
+
+
+        Get.offAllNamed(
           "/home",
           arguments: [
             authservice.userId.value,
-            rxMap['role'],
-            rxMap['profileImage'],
+            userData['role'],
+            profileImage,
           ],
         );
       } else {
-        Get.toNamed("/login");
+        Get.offAllNamed("/login");
       }
-    } catch (e) {}
+    } catch (e) {
+      logger.e('An error occurred in checkLoginStatus: $e');
+      Get.snackbar(
+        'Error',
+        'Failed to connect to the server. Please check your internet connection and try again',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      Get.offAllNamed('/login');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    checkLoginStatus();
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(

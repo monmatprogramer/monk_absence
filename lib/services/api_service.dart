@@ -27,7 +27,7 @@ class ApiService {
       );
       // Check if the request was successful
       if (response.statusCode == 200) {
-        final List<dynamic> jsonData = json.decode(
+          final List<dynamic> jsonData = json.decode(
           response.body,
         ); //response.body = [{"id": 1, "name": "Session 1"}, {"id": 2, "name": "Session 2"}];
         return jsonData.cast<Map<String, dynamic>>();

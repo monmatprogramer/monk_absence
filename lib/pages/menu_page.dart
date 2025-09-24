@@ -12,22 +12,23 @@ import 'package:qr_code_tools/qr_code_tools.dart';
 
 class MenuPage extends StatefulWidget {
   MenuPage({super.key});
-  final profileController = Get.find<ProfileController>();
 
-  final int userId = Get.arguments[0];
-  final String userRole = Get.arguments[1] ?? "user";
 
   @override
   State<MenuPage> createState() => _MenuPageState();
 }
 
 class _MenuPageState extends State<MenuPage> {
+  final profileController = Get.find<ProfileController>();
   final PageController _pageController = PageController();
   final HomePageScanController controller = Get.put(HomePageScanController());
   final scanCameraController = Get.put(ScanCameraController());
   final autherService = Get.find<AuthService>();
   var logger = Logger(printer: PrettyPrinter());
   int _currentPage = 0;
+  final int userId = 0;
+  final String userRole = "user";
+
   static const List<String> _bannerImages = [
     'https://cdn.pixabay.com/photo/2025/06/14/21/46/plane-9660343_1280.jpg',
     'https://d1y8sb8igg2f8e.cloudfront.net/images/32517113524_1f8c2d8459_o.width-800.jpg',
@@ -53,7 +54,7 @@ class _MenuPageState extends State<MenuPage> {
           //call camera
           Get.toNamed(
             '/camera',
-            arguments: [autherService.userId.value, widget.userRole],
+            arguments: [autherService.userId.value, userRole],
           );
         },
       ),
@@ -250,11 +251,11 @@ class _MenuPageState extends State<MenuPage> {
                               ),
                               child: ProfileAvartar(
                                 localImageFile:
-                                    widget.profileController.image.value,
+                                    profileController.image.value,
                                 networkImagUrl:
                                     // widget.profileController.imageUrl.value,
                                 // dfaultAssetPath:
-                                    widget.profileController.imagePath.value,
+                                    profileController.imagePath.value,
                               ),
                             ),
                           ),
@@ -290,6 +291,13 @@ class _MenuPageState extends State<MenuPage> {
           ],
         ),
       ),
+      //Floating action button
+        floatingActionButton: FloatingActionButton(
+          onPressed: (){
+            logger.d(autherService.wholeData);
+          },
+          child: const Icon(Icons.person),
+        ),
     );
   }
 }

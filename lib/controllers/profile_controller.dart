@@ -1,12 +1,16 @@
 import 'dart:io';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:get/get.dart';
+import 'package:logger/logger.dart';
 import 'package:presence_app/pages/loading_states.dart';
 import 'package:presence_app/services/auth_service.dart';
 import 'package:presence_app/db_config.dart';
 
 class ProfileController extends GetxController {
   final authService = Get.find<AuthService>();
+  final Logger _logger = Logger(
+    printer: PrettyPrinter(),
+  );
 
   final profileResponse = Rx<ApiResponse<Map<String, dynamic>>>(
     ApiResponse.initial(),
@@ -35,7 +39,7 @@ class ProfileController extends GetxController {
   }
 
   Future<void> _loadingProfile() async {
-    profileResponse.value = ApiResponse.loading();
+    profileResponse.value = ApiResponse.loading();// LoadingStates.loading
     try {
       final data = await authService.getProfile();
       profileResponse.value = ApiResponse.success(data);

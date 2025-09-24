@@ -328,11 +328,12 @@ class _SessionListItem extends StatefulWidget {
   State<_SessionListItem> createState() => _SessionListItemState();
 }
 
-class _SessionListItemState extends State<_SessionListItem>
-    with SingleTickerProviderStateMixin {
+class _SessionListItemState extends State<_SessionListItem> with SingleTickerProviderStateMixin {
+
   bool _isExpanded = false;
   late final AnimationController _controller;
   late final Animation<double> _animation;
+
   @override
   void initState() {
     super.initState();
@@ -360,6 +361,7 @@ class _SessionListItemState extends State<_SessionListItem>
     final txtTheme = Theme.of(context).textTheme;
     final colorScheme = Theme.of(context).colorScheme;
     final activateColor = widget.session.isActive ? Colors.green : Colors.red;
+
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       elevation: 2,

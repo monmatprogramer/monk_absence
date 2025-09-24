@@ -8,30 +8,29 @@ class ProfileHeaderBody extends StatelessWidget {
   final GlobalKey widgetKey = GlobalKey();
   final authServer = Get.find<AuthService>();
   final proController = Get.put(ProfileController());
-  // Future<void> handleGetProfile() async {
-  //   await authServer.getProfile();
-  // }
 
   @override
   Widget build(BuildContext context) {
+
     if (widgetKey.currentContext == null) {
       Get.delete<ProfileController>();
     }
+
     return authServer.wholeData.isEmpty
         ? const Center(child: Text('Failed to fetch user data'))
         : Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               RichText(
                 text: TextSpan(
                   children: [
                     TextSpan(
                       text: "Name",
-                      style: TextStyle(color: Colors.black, fontSize: 18),
+                      style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 18),
                     ),
                     TextSpan(
                       text: " : ",
-                      style: TextStyle(color: Colors.black, fontSize: 18),
+                      style: TextStyle(color: Colors.white, fontSize: 18),
                     ),
                     TextSpan(
                       text: authServer.wholeData['username'],
@@ -50,7 +49,7 @@ class ProfileHeaderBody extends StatelessWidget {
                   children: [
                     TextSpan(
                       text: "Email",
-                      style: TextStyle(color: Colors.black, fontSize: 14),
+                      style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 14),
                     ),
                     TextSpan(
                       text: " : ",
@@ -73,7 +72,7 @@ class ProfileHeaderBody extends StatelessWidget {
                   children: [
                     TextSpan(
                       text: "Role",
-                      style: TextStyle(color: Colors.black, fontSize: 14),
+                      style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 14),
                     ),
                     TextSpan(
                       text: " : ",

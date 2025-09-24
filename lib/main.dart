@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:presence_app/Forms/login_user_page.dart';
 import 'package:presence_app/controllers/session_binding.dart';
 import 'package:presence_app/pages/exception_test_page.dart';
+import 'package:presence_app/pages/practice_page.dart';
 import 'package:presence_app/services/auth_service.dart';
 import 'package:presence_app/controllers/app_binding.dart';
 import 'package:presence_app/controllers/scan_camera_binding.dart';
@@ -116,7 +117,7 @@ void main() {
         ),
       ),
 
-      initialRoute: '/exception-test-page',
+      initialRoute: '/loading',
 
       getPages: [
         GetPage(
@@ -181,76 +182,8 @@ void main() {
         ),
         GetPage(name: '/exception-test-page', page: () => ExceptionTestPage()),
         GetPage(name: '/access-restricted', page: () => AccessRestrictedPage()),
+        GetPage(name: '/practice', page: () => PracticePage()),
       ],
     ),
   );
 }
-/*
-class RunApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return GetMaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-      ),
-      home: const LoadingPage(),
-    );
-  }
-}
-
-class MyApp extends StatelessWidget {
-  MyApp({super.key});
-  // final AuthService authService = AuthService();
-  // This widget is the root of your application.
-  void test() {}
-  @override
-  Widget build(BuildContext context) {
-    return GetMaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-      ),
-      // home: const MyHomePage(title: 'Flutter Demo Home Page'),
-      initialRoute: '/',
-      getPages: [
-        GetPage(name: '/', page: () => HomePage()),
-        GetPage(
-          name: '/profile',
-          page: () => PrfilePageGet(),
-          binding: ProfileBinding(),
-        ),
-      ], //first call to default route
-      // routes: {
-      //   //Default route in show login form
-      //   // '/': (context) => const LoadingPage(),
-      //   '/': (context) => HomePage(),
-      //   '/login': (context) => const FormCon(),
-      //   '/scm': (context) => const ScannerPageCam(), //scanner camera
-      //   '/scs': (context) => const ScannerScreen(),
-      //   '/sqc': (context) => const ScannerPageContainer(),
-      //   '/scn': (context) => const ScannerScreenNew(),
-      //   '/sqrcc': (context) => const Sqrcc(),
-      //   '/scp': (context) => QrCodeScreen(session: "afternoon"),
-      //   '/profile': (context) => ProfilePageCon(), //scp = scan page
-      // },
-    );
-  }
-}
-
-// class MyHomePage extends StatefulWidget {
-//   const MyHomePage({super.key, required this.title});
-//   final String title;
-//   @override
-//   State<MyHomePage> createState() => _MyHomePageState();
-// }
-
-// class _MyHomePageState extends State<MyHomePage> {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(body: const LoadingPage());
-//   }
-// }
-*/
