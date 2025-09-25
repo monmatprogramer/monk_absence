@@ -11,6 +11,7 @@ import 'package:presence_app/services/auth_service.dart';
 import 'package:presence_app/conponent/profile_avartar.dart';
 import 'package:presence_app/controllers/profile_controller.dart';
 import 'package:presence_app/db_config.dart';
+import 'package:presence_app/services/profile_image_service.dart';
 
 class ProfileImageCircle extends StatelessWidget {
   ProfileImageCircle({super.key});
@@ -18,7 +19,7 @@ class ProfileImageCircle extends StatelessWidget {
   final profileController = Get.find<ProfileController>();
   final authService = Get.find<AuthService>();
   final userId = Get.arguments;
-
+  final profileImageService = ProfileImageService();
   final logger = Logger(printer: PrettyPrinter());
 
   Future<void> pickImage() async {
@@ -35,7 +36,9 @@ class ProfileImageCircle extends StatelessWidget {
     if(kIsWeb){
       // Web: read as bytes
       Uint8List bytes = await pickerFile.readAsBytes();
-      await uploadImageWeb(bytes, pickerFile.name);
+      //get token
+      final String token = await authService.getToken();
+      await profileImageService.uploadProfileImage(token, bytes, pickerFile.name);
     }else{
       // Mobile / Desktop : use file
       File file = File(pickerFile.path);
