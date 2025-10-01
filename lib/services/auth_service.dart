@@ -34,6 +34,7 @@ class AuthService extends GetxService {
   }
 
   void updateUserId(int value) => userId.value = value;
+
   Future<void> login(String username, String password) async {
     isLoading.value = true;
     //clear any previous user data to avoid duplication

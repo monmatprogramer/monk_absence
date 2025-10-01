@@ -40,14 +40,12 @@ class ProfileImageCircle extends StatelessWidget {
         // Mobile / Desktop : use file
         File file = File(pickerFile.path);
         logger.d('🗃️ file: $file');
+        //TODO: Implement here
       }
     }catch(e){
       logger.e("❌ Error picking image: $e ");
     }
   }
-
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +61,7 @@ class ProfileImageCircle extends StatelessWidget {
               : ProfileAvartar(
                   size: 140,
                   localImageFile: profileController.image.value,
-                  // networkImagUrl: profileController.imageUrl.value,
+                  networkImagUrl: profileController.imageUrl,
                   dfaultAssetPath: 'images/profile.png',
                 ),
           Positioned(

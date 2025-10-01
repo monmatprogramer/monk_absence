@@ -11,7 +11,7 @@ import 'package:presence_app/controllers/scan_camera_controller.dart';
 import 'package:qr_code_tools/qr_code_tools.dart';
 
 class MenuPage extends StatefulWidget {
-  MenuPage({super.key});
+  const MenuPage({super.key});
 
 
   @override
@@ -250,12 +250,9 @@ class _MenuPageState extends State<MenuPage> {
                                 shape: BoxShape.circle,
                               ),
                               child: ProfileAvartar(
-                                localImageFile:
-                                    profileController.image.value,
-                                networkImagUrl:
-                                    // widget.profileController.imageUrl.value,
-                                // dfaultAssetPath:
-                                    profileController.imagePath.value,
+                                localImageFile: profileController.image.value,
+                                networkImagUrl: profileController.imageUrl,
+                                // dfaultAssetPath: profileController.imagePath.value,
                               ),
                             ),
                           ),

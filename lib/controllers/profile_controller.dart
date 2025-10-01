@@ -48,7 +48,9 @@ class ProfileController extends GetxController {
     }
   }
 
+
   Future<void> updateImageUrl(String newImagePath) async {
+
     final oldUrl = imageUrl;
     if (oldUrl != null) {
       await DefaultCacheManager().removeFile(oldUrl);
@@ -58,6 +60,7 @@ class ProfileController extends GetxController {
       final currentData = profileResponse.value.data!;
       final updatedData = Map<String, dynamic>.from(currentData);
       updatedData['profileImage'] = newImagePath;
+      _logger.d("updatedData['profieImage']: ${updatedData['profileImage']} in updateImageUrl");
       profileResponse.value = ApiResponse.success(updatedData);
     }
     isProfileImageChanged.value = true;

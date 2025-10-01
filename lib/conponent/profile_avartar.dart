@@ -16,15 +16,11 @@ class ProfileAvartar extends StatelessWidget {
     this.networkImagUrl,
     this.dfaultAssetPath = 'images/monk_profile_mock.jpg',
   });
-  var logger = Logger(printer: PrettyPrinter());
+  final logger = Logger(printer: PrettyPrinter());
 
   @override
   Widget build(BuildContext context) {
-    logger.d('''
-      localImageFile: $localImageFile,
-      networkImagUrl: $networkImagUrl,
-      dfaultAssetPath: $dfaultAssetPath
-    ''');
+
     if (localImageFile != null) {
       return CircleAvatar(
         radius: size / 2,
@@ -32,7 +28,6 @@ class ProfileAvartar extends StatelessWidget {
       );
     }
     if (networkImagUrl != null && networkImagUrl!.isNotEmpty) {
-      logger.d("ProfileAvartar 👉 $networkImagUrl");
       return CircleAvatar(
         radius: size / 2,
         backgroundColor: Colors.grey.shade200,
